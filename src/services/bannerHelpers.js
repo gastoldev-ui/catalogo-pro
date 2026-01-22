@@ -1,45 +1,53 @@
 /**
- * Asegura que el banner siempre tenga 5 slots definidos.
- * Transforma datos viejos o inicializa banners nuevos.
+ * bannerHelpers.js
+ * Gestiona la transición de datos para el sistema de banners multi-bloque con rango.
  */
-export const prepararDatosBanner = (info) => {
-  // 1. Crear la estructura base: un array de 5 slots vacíos
-  const slotsBase = Array(5).fill(null).map(() => ({
-    activo: false,
-    texto: '',
-    color: '#1a5fb4'
-  }));
 
-  // Caso A: No hay información previa (Banner virgen)
+export const prepararDatosBanner = (info) => {
+  // Caso 1: No hay datos (Banner nuevo)
+  // Devolvemos un array con un bloque por defecto que ocupa todo el ancho (1 a 5)
   if (!info) {
-    return slotsBase;
+    return [
+      { 
+        texto: '', 
+        color: '#1a5fb4', 
+        desde: 1, 
+        hasta: 5 
+      }
+    ];
   }
 
-  // Caso B: Es el formato nuevo (Array de 5 slots)
-  if (Array.isArray(info) && info.length === 5) {
+  // Caso 2: Ya es el formato nuevo (un Array de bloques)
+  if (Array.isArray(info)) {
+    // Si el array está vacío, devolvemos el bloque por defecto
+    if (info.length === 0) {
+      return [{ texto: '', color: '#1a5fb4', desde: 1, hasta: 5 }];
+    }
+    // Si tiene datos, devolvemos una copia limpia
     return [...info];
   }
 
-  // Caso C: Es el formato antiguo (Un solo objeto con texto y color)
-  // Lo migramos activando solo el primer slot o expandiéndolo según prefieras.
-  // Aquí lo activamos en el slot 0 (izquierda) y mantenemos el resto vacío.
-  if (!Array.isArray(info) && info.texto) {
-    slotsBase[0] = {
-      activo: true,
-      texto: info.texto.toUpperCase(),
-      color: info.color || '#1a5fb4'
-    };
-    return slotsBase;
+  // Caso 3: Formato de objeto único (la versión de "un solo bloque")
+  // Lo convertimos a un Array de un solo elemento para que el modal no falle
+  if (typeof info === 'object' && info.texto !== undefined) {
+    return [
+      {
+        texto: info.texto || '',
+        color: info.color || '#1a5fb4',
+        desde: info.desde || 1,
+        hasta: info.hasta || 5
+      }
+    ];
   }
 
-  // Caso D: Cualquier otro formato extraño o array de longitud distinta
-  return slotsBase;
+  // Caso 4: Cualquier otro formato desconocido
+  return [{ texto: '', color: '#1a5fb4', desde: 1, hasta: 5 }];
 };
 
 /**
- * Función útil para validar si un banner tiene al menos un bloque con texto
+ * Valida si un banner tiene al menos un bloque con texto para decidir si mostrarlo o no.
  */
-export const tieneContenidoActivo = (bloques) => {
+export const tieneContenidoVisible = (bloques) => {
   if (!Array.isArray(bloques)) return false;
-  return bloques.some(b => b.activo && b.texto.trim() !== "");
+  return bloques.some(b => b.texto && b.texto.trim() !== "");
 };
