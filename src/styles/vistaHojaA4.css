@@ -1,0 +1,128 @@
+/* ==========================================
+   ESTRUCTURA DE IMPRESIÓN A4
+   ========================================== */
+
+/* Contenedor externo (Previsualización en pantalla) */
+.hojas-lista-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  width: 100%;
+  padding: 40px 0;
+}
+
+/* La Hoja Física */
+.vista-hoja-a4 {
+  width: 210mm;
+  height: 297mm;
+  background-color: white;
+  padding: 8mm 10mm;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  position: relative;
+  flex-shrink: 0;
+  overflow: hidden;
+  box-shadow: 0 0 30px rgba(0,0,0,0.3);
+}
+
+/* --- HEADER (Marca y Contacto) --- */
+.header-empresa {
+  height: 12mm;
+  border-bottom: 2pt solid #1a5fb4;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  justify-content: space-between; /* Empuja un bloque a cada punta */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.marca-lineal {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-img {
+  height: 9mm;
+  width: auto;
+  object-fit: contain;
+}
+
+.nombre-texto {
+  font-size: 16pt;
+  font-weight: 900;
+  color: #1a5fb4;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.datos-contacto-lineal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 8.5pt;
+  color: #444;
+}
+
+.separador {
+  color: #1a5fb4;
+  font-weight: bold;
+  opacity: 0.4;
+}
+
+.tel-negrita {
+  font-weight: 800;
+  color: #111;
+}
+
+/* --- CUERPO Y GRILLA --- */
+.cuerpo-catalogo {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  width: 100%;
+}
+
+.fila-productos-contenedor {
+  display: grid;
+  /* Creamos 5 columnas exactamente iguales */
+  grid-template-columns: repeat(5, 1fr);
+  width: 100%;
+  height: 58mm; /* Tu medida graduada */
+  box-sizing: border-box;
+  border-bottom: 0.1pt solid #eee;
+  margin: 0;
+  padding: 0;
+}
+
+/* --- CONFIGURACIÓN DE IMPRESORA --- */
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  .hojas-lista-wrapper {
+    padding: 0;
+    gap: 0;
+  }
+
+  .vista-hoja-a4 {
+    margin: 0;
+    box-shadow: none;
+    page-break-after: always;
+    break-after: page;
+    /* Asegura que los colores de fondo de los banners se impriman */
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Ocultamos lo que no debe salir en papel */
+  .no-print {
+    display: none;
+  }
+}

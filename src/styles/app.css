@@ -1,0 +1,25 @@
+/* Contenedor Raíz */
+.app-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background-color: #121212;
+  overflow: hidden;
+}
+
+/* El área de previsualización (donde flotan las hojas) */
+.main-preview-area {
+  flex-grow: 1;
+  background-color: #343a40;
+  overflow-y: auto;   /* EL SCROLL DEBE ESTAR AQUÍ */
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;          /* Espacio físico entre hojas */
+}
+@media print {
+  .app-container { display: block; background: white; }
+  .main-preview-area { padding: 0; background: white; overflow: visible; }
+}
+

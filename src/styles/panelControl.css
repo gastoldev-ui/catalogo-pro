@@ -1,0 +1,218 @@
+.panel-control {
+  width: 320px;
+  height: 100vh;
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border-right: 1px solid #333;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.panel-header {
+  margin-bottom: 30px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 15px;
+}
+
+.panel-header h2 {
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: #00a8ff;
+  margin: 0;
+}
+
+.badge-count {
+  font-size: 0.75rem;
+  background: #333;
+  padding: 2px 8px;
+  border-radius: 10px;
+  color: #aaa;
+}
+
+.panel-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.section-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #666;
+  letter-spacing: 1px;
+}
+
+.panel-section input {
+  background: #2d2d2d;
+  border: 1px solid #444;
+  color: white;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.panel-section input:focus {
+  border-color: #00a8ff;
+  outline: none;
+}
+
+/* --- BOTONES --- */
+.btn-action {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-import { background: #3b3b3b; color: white; }
+.btn-add { background: #00a8ff; color: white; }
+.btn-print { background: #e63946; color: white; margin-top: 10px; }
+
+.btn-action:hover { opacity: 0.9; transform: translateY(-1px); }
+
+/* Wrapper para el input file invisible */
+.file-input-wrapper {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.file-input-wrapper input[type=file] {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+.panel-footer {
+  margin-top: auto;
+}
+
+.btn-reset {
+  background: transparent;
+  color: #555;
+  border: 1px solid #333;
+  width: 100%;
+  padding: 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.btn-reset:hover { color: #e63946; border-color: #e63946; }
+
+/* --- AREA DE CARGA DE LOGO --- */
+.logo-upload-area {
+  width: 100%;
+  height: 80px;
+  border: 2px dashed #4a4a4a;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #3d3d3d;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.logo-upload-area:hover {
+  border-color: #1a5fb4;
+  background-color: #454545;
+}
+
+.logo-upload-area.dragging {
+  border-color: #34d399; /* Verde cuando arrastras */
+  background-color: rgba(52, 211, 153, 0.1);
+  transform: scale(1.02);
+}
+
+.logo-upload-area.has-logo {
+  border-style: solid;
+  border-color: #555;
+}
+
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+.upload-placeholder small {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+.logo-preview-thumb {
+  max-height: 90%;
+  max-width: 90%;
+  object-fit: contain;
+}
+/* Contenedor de la preview con el botón X */
+.preview-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-clear-logo {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: #e63946;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+  z-index: 5;
+}
+
+.btn-clear-logo:hover {
+  transform: scale(1.1);
+  background: #ff4d5a;
+}
+
+/* Input de URL */
+.logo-url-input-group {
+  margin-top: 8px;
+  width: 100%;
+}
+
+.input-url-logo {
+  width: 100%;
+  padding: 8px;
+  font-size: 11px !important; /* Más pequeño para que quepan URLs largas */
+  background: #2d2d2d !important;
+  border: 1px solid #444 !important;
+  color: #ccc !important;
+  border-radius: 4px;
+}
+
+.input-url-logo:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  font-style: italic;
+}

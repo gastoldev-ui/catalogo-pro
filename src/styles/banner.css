@@ -1,0 +1,86 @@
+/* ================================================= */
+/* CONTENEDOR PRINCIPAL DEL BANNER                   */
+/* ================================================= */
+.banner-grid-container {
+  width: 100%;
+  height: 9mm; /* Altura fija para mantener proporción en la hoja */
+  display: grid;
+  /* Creamos 5 columnas idénticas a las de la grilla de productos */
+  grid-template-columns: repeat(5, 1fr); 
+  cursor: pointer;
+  overflow: hidden;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  /* Asegura que los colores se impriman en PDF */
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* ================================================= */
+/* BLOQUES INDIVIDUALES (CADA SLOT)                  */
+/* ================================================= */
+.banner-block {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  box-sizing: border-box;
+  transition: background-color 0.2s ease;
+}
+
+/* El texto dentro de cada bloque */
+.banner-text {
+  color: white;
+  font-weight: 900;
+  font-size: 13pt; /* Tamaño ideal para títulos de categoría */
+  text-transform: uppercase;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Si el texto es muy largo, pone puntos suspensivos */
+  letter-spacing: 0.5px;
+}
+
+/* ================================================= */
+/* ESTADOS (VACÍO Y ACTIVO)                          */
+/* ================================================= */
+
+/* Cuando no hay nada configurado (Modo edición) */
+.banner-grid-container.empty {
+  display: flex; /* Se comporta como una sola barra */
+  background-color: #f8f9fa;
+  border: 1px dashed #ccc;
+  justify-content: center;
+  align-items: center;
+}
+
+.banner-placeholder {
+  font-size: 8pt;
+  color: #aaa;
+  font-weight: normal;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Hover para el editor */
+.banner-grid-container:hover {
+  filter: brightness(0.95);
+  outline: 1px solid rgba(0,0,0,0.1);
+}
+
+/* ================================================= */
+/* CONFIGURACIÓN PARA IMPRESIÓN                      */
+/* ================================================= */
+@media print {
+  /* Ocultamos los banners que están totalmente vacíos al imprimir */
+  .banner-grid-container.empty {
+    display: none !important;
+  }
+
+  /* Aseguramos nitidez en los textos blancos */
+  .banner-text {
+    text-shadow: none;
+  }
+}
