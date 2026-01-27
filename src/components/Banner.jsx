@@ -1,30 +1,28 @@
 import React from 'react';
-import '../styles/banner.css'; // Asegúrate de tener este archivo o incluir los estilos
+import '../styles/banner.css';
 
 const Banner = ({ id, datos, abrirEditor, columnasTotales }) => {
   
-  // 1. Si no hay datos cargados, mostramos el botón de configuración (solo pantalla)
+  // 1. Si no hay datos, botón de configuración
   if (!datos || !datos.celdas || datos.celdas.length === 0) {
     return (
       <div 
         className="banner-fila-vacia no-print" 
         onClick={() => abrirEditor(id, datos || { celdas: [] }, 'banner')}
-        title="Configurar fila de banners"
       >
-        <span className="plus-icon">+</span> Configurar Fila de Banners (Espacio de {columnasTotales} celdas)
+        <span style={{ fontSize: '18px', marginRight: '8px', fontWeight: 'bold' }}>+</span> 
+        Configurar Fila de Banners ({columnasTotales} columnas)
       </div>
     );
   }
 
-  // 2. Renderizado de la fila con Grid dinámico
+  // 2. Renderizado de la fila
   return (
     <div 
       className="fila-banner-maestra" 
       style={{ 
-        display: 'grid', 
-        /* Usamos la misma cantidad de columnas que los productos para alinear */
         gridTemplateColumns: `repeat(${columnasTotales}, 1fr)`,
-        gap: '0', // Sin gap para que las imágenes se peguen si el usuario quiere
+        gap: '0px'
       }}
     >
       {datos.celdas.map((celda, idx) => (
@@ -33,10 +31,10 @@ const Banner = ({ id, datos, abrirEditor, columnasTotales }) => {
           className="celda-banner-item"
           onClick={() => abrirEditor(id, datos, 'banner')}
           style={{ 
-            /* Esta es la clave: el span define cuánto espacio ocupa */
             gridColumn: `span ${celda.ancho || 1}`,
             backgroundColor: celda.tipo === 'texto' ? (celda.colorFondo || '#f4f4f4') : 'transparent',
-            border: '0.1pt solid rgba(0,0,0,0.05)' // Borde casi invisible para guiar
+            border: '0.1pt solid rgba(0,0,0,0.05)',
+            minHeight: '40px' 
           }}
         >
           {celda.tipo === 'imagen' ? (
@@ -44,7 +42,9 @@ const Banner = ({ id, datos, abrirEditor, columnasTotales }) => {
               {celda.contenido ? (
                 <img src={celda.contenido} alt="Banner" className="banner-img-render" />
               ) : (
-                <span className="no-img-text no-print">Sin imagen</span>
+                <span className="no-img-text no-print" style={{ fontSize: '10px', color: '#ccc' }}>
+                  Sin imagen
+                </span>
               )}
             </div>
           ) : (
