@@ -1,58 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import './styles/app.css'; // Centralizado
+import './styles/app.css'; 
 import PanelControl from './components/PanelControl';
 import VistaHojaA4 from './components/VistaHojaA4';
 import ModalesContainer from './components/ModalesContainer';
-import { prepararDatosBanner } from './services/bannerHelpers';
 
 function App() {
-  // --- ESTADOS ---
-  const [datos, setDatos] = useState(() => JSON.parse(localStorage.getItem('cat_ajustes')) || { nombre: 'Empresa', dir: '', tel: '', logoUrl: '' });
+  // --- CARGA DESDE LOCALSTORAGE ---
   const [productos, setProductos] = useState(() => JSON.parse(localStorage.getItem('cat_prods')) || []);
   const [bannersManuales, setBannersManuales] = useState(() => JSON.parse(localStorage.getItem('cat_banners')) || {});
-  const [showModal, setShowModal] = useState(false);
-  const [tempEditor, setTempEditor] = useState({ id: null, datos: {}, tipo: '' });
+  const [datos, setDatos] = useState(() => JSON.parse(localStorage.getItem('cat_ajustes')) || { nombre: '', dir: '', tel: '' });
+  const [columnas, setColumnas] = useState(() => Number(localStorage.getItem('cat_cols')) || 5);
 
-  // --- PERSISTENCIA ---
+  const [showModal, setShowModal] = useState(false);
+  const [tempEditor, setTempEditor] = useState(null);
+
+  // --- PERSISTENCIA AUTOMÁTICA ---
   useEffect(() => {
-    localStorage.setItem('cat_ajustes', JSON.stringify(datos));
     localStorage.setItem('cat_prods', JSON.stringify(productos));
     localStorage.setItem('cat_banners', JSON.stringify(bannersManuales));
-  }, [datos, productos, bannersManuales]);
+    localStorage.setItem('cat_ajustes', JSON.stringify(datos));
+    localStorage.setItem('cat_cols', columnas.toString());
+  }, [productos, bannersManuales, datos, columnas]);
 
-  // --- LOGICA EDITORES ---
   const abrirEditor = (id, info, tipo) => {
-    // Usamos el helper si es banner, sino clonamos el producto
-    const datosParaElModal = tipo === 'banner' 
-      ? prepararDatosBanner(info) 
-      : { ...info };
-
-    setTempEditor({ 
-      id, 
-      datos: datosParaElModal, 
-      tipo 
-    });
-  
-    setShowModal(true); 
+    setTempEditor({ id, datos: { ...info }, tipo });
+    setShowModal(true);
   };
 
-  const guardarCambios = () => {
+  const guardarCambios = (datosRecibidos) => {
     if (tempEditor.tipo === 'producto') {
       const nuevos = [...productos];
-      // Si el ID es mayor o igual al largo, es un producto nuevo (push)
-      if (tempEditor.id >= nuevos.length) {
-        nuevos.push(tempEditor.datos);
-      } else {
-        nuevos[tempEditor.id] = tempEditor.datos;
-      }
+      if (tempEditor.id >= nuevos.length) nuevos.push(datosRecibidos);
+      else nuevos[tempEditor.id] = datosRecibidos;
       setProductos(nuevos);
     } else {
-      // PARA BANNERS:
-      // Guardamos directamente el array que viene del modal
-      setBannersManuales({ 
-        ...bannersManuales, 
-        [tempEditor.id]: tempEditor.datos 
-      });
+      setBannersManuales(prev => ({ ...prev, [tempEditor.id]: datosRecibidos }));
     }
     setShowModal(false);
   };
@@ -60,11 +42,8 @@ function App() {
   return (
     <div className="app-container">
       <PanelControl 
-        datos={datos} 
-        setDatos={setDatos} 
-        setProductos={setProductos} 
-        abrirEditor={abrirEditor}
-        totalProds={productos.length}
+        datos={datos} setDatos={setDatos} 
+        columnas={columnas} setColumnas={setColumnas}
       />
 
       <main className="main-preview-area">
@@ -72,7 +51,8 @@ function App() {
           productos={productos} 
           datos={datos} 
           bannersManuales={bannersManuales} 
-          abrirEditor={abrirEditor} 
+          abrirEditor={abrirEditor}
+          columnas={columnas}
         />
       </main>
 
@@ -80,9 +60,8 @@ function App() {
         showEditor={showModal} 
         onHideEditor={() => setShowModal(false)}
         tempEditor={tempEditor} 
-        setTempEditor={setTempEditor}
-        guardarCambios={guardarCambios} 
-        eliminarProducto={(idx) => { setProductos(productos.filter((_, i) => i !== idx)); setShowModal(false); }}
+        guardarCambios={guardarCambios}
+        columnasTotales={columnas}
       />
     </div>
   );

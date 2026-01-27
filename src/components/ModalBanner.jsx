@@ -1,86 +1,116 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-const ModalBanner = ({ tempEditor, setTempEditor, onHideEditor, guardarCambios }) => {
-  const bloques = Array.isArray(tempEditor.datos) ? tempEditor.datos : [];
+const ModalBanner = ({ banner, id, alGuardar, alCerrar, columnasTotales }) => {
+  const [celdas, setCeldas] = useState(banner?.celdas || [
+    { 
+      id: Date.now(), 
+      ancho: columnasTotales, 
+      tipo: 'texto', 
+      contenido: '', 
+      colorFondo: '#1a5fb4',
+      colorTexto: '#ffffff' 
+    }
+  ]);
 
-  const agregarBloque = () => {
-    const nuevo = { texto: '', color: '#1a5fb4', desde: 1, hasta: 1 };
-    setTempEditor({ ...tempEditor, datos: [...bloques, nuevo] });
-  };
+  const anchoOcupado = celdas.reduce((acc, c) => acc + Number(c.ancho), 0);
+  const espacioRestante = columnasTotales - anchoOcupado;
+  const esAnchoValido = anchoOcupado <= columnasTotales;
 
-  const eliminarBloque = (index) => {
-    setTempEditor({ ...tempEditor, datos: bloques.filter((_, i) => i !== index) });
-  };
-
-  const update = (index, campo, valor) => {
-    const nuevos = [...bloques];
-    nuevos[index] = { ...nuevos[index], [campo]: valor };
-    setTempEditor({ ...tempEditor, datos: nuevos });
+  const actualizarCelda = (index, campo, valor) => {
+    const nuevas = [...celdas];
+    nuevas[index][campo] = valor;
+    setCeldas(nuevas);
   };
 
   return (
     <>
-      <div className="modal-header border-secondary d-flex justify-content-between align-items-center">
-        <h5 className="modal-title text-info fw-bold">EDITOR DE BLOQUES MÚLTIPLES</h5>
-        <button className="btn btn-sm btn-outline-info" onClick={agregarBloque}>+ AÑADIR BLOQUE</button>
+      {/* Header Compacto igual al de Productos */}
+      <div className={`modal-header ${esAnchoValido ? 'bg-dark' : 'bg-danger'} text-white py-2 px-3`}>
+        <h6 className="modal-title m-0">
+          📏 Configurar Banners ({anchoOcupado}/{columnasTotales})
+        </h6>
+        <button type="button" className="btn-close btn-close-white shadow-none" onClick={alCerrar} style={{ scale: '0.8' }}></button>
       </div>
 
-      <div className="modal-body bg-dark">
-        {/* VISTA PREVIA RÁPIDA */}
-        <div className="banner-grid-container mb-4" style={{ height: '30px', border: '1px solid #444' }}>
-          {bloques.map((b, i) => (
-            <div key={i} style={{
-              gridColumnStart: b.desde,
-              gridColumnEnd: b.hasta + 1,
-              backgroundColor: b.color,
-              border: '1px solid white',
-              fontSize: '9px', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center'
-            }}>
-              {b.texto || `B${i+1}`}
-            </div>
-          ))}
-        </div>
-
-        <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-          {bloques.map((b, i) => (
-            <div key={i} className="p-3 mb-3 border border-secondary rounded bg-black">
-              <div className="row g-2 align-items-end">
+      <div className="modal-body bg-secondary-subtle p-3" style={{ maxHeight: '65vh', overflowY: 'auto' }}>
+        {celdas.map((celda, index) => (
+          <div key={celda.id} className="card shadow-sm mb-3 border-0">
+            <div className="card-body p-2">
+              <div className="row g-2 mb-2 align-items-end">
+                <div className="col-5">
+                  <label className="form-label mb-0 small fw-bold text-muted" style={{ fontSize: '0.65rem' }}>TIPO</label>
+                  <select className="form-select form-select-sm" value={celda.tipo} onChange={(e) => actualizarCelda(index, 'tipo', e.target.value)}>
+                    <option value="texto">Texto</option>
+                    <option value="imagen">Imagen (URL)</option>
+                  </select>
+                </div>
                 <div className="col-4">
-                  <label className="small text-secondary">TEXTO</label>
-                  <input type="text" className="form-control form-control-sm bg-dark text-white border-secondary" 
-                    value={b.texto} onChange={e => update(i, 'texto', e.target.value.toUpperCase())} />
+                  <label className="form-label mb-0 small fw-bold text-muted" style={{ fontSize: '0.65rem' }}>ANCHO</label>
+                  <input 
+                    type="number" className="form-control form-control-sm text-center"
+                    min="1" max={columnasTotales} 
+                    value={celda.ancho} 
+                    onChange={(e) => actualizarCelda(index, 'ancho', Number(e.target.value))}
+                  />
                 </div>
-                <div className="col-2">
-                  <label className="small text-secondary">DESDE</label>
-                  <select className="form-select form-select-sm bg-dark text-white border-secondary" 
-                    value={b.desde} onChange={e => update(i, 'desde', parseInt(e.target.value))}>
-                    {[1,2,3,4,5].map(n => <option key={n} value={n}>{n}</option>)}
-                  </select>
-                </div>
-                <div className="col-2">
-                  <label className="small text-secondary">HASTA</label>
-                  <select className="form-select form-select-sm bg-dark text-white border-secondary" 
-                    value={b.hasta} onChange={e => update(i, 'hasta', parseInt(e.target.value))}>
-                    {[1,2,3,4,5].map(n => <option key={n} value={n}>{n}</option>)}
-                  </select>
-                </div>
-                <div className="col-2">
-                  <label className="small text-secondary">COLOR</label>
-                  <input type="color" className="form-control form-control-color bg-dark border-secondary w-100" 
-                    value={b.color} onChange={e => update(i, 'color', e.target.value)} />
-                </div>
-                <div className="col-2">
-                  <button className="btn btn-sm btn-danger w-100" onClick={() => eliminarBloque(i)}>ELIMINAR</button>
+                <div className="col-3">
+                  <button className="btn btn-sm btn-outline-danger w-100 py-1" onClick={() => setCeldas(celdas.filter((_, i) => i !== index))}>
+                    Borrar
+                  </button>
                 </div>
               </div>
+
+              <div className="mb-2">
+                <input 
+                  className="form-control form-control-sm"
+                  placeholder={celda.tipo === 'texto' ? "Escribe el mensaje aquí..." : "Pega el enlace de la imagen..."}
+                  value={celda.contenido}
+                  onChange={(e) => actualizarCelda(index, 'contenido', e.target.value)}
+                />
+              </div>
+
+              {celda.tipo === 'texto' && (
+                <div className="row g-2 mt-1">
+                  <div className="col-6 d-flex align-items-center">
+                    <label className="small text-muted me-2" style={{ fontSize: '0.6rem' }}>FONDO</label>
+                    <input type="color" className="form-control form-control-color border-0 p-0" style={{ height: '24px', width: '100%' }} value={celda.colorFondo} onChange={(e) => actualizarCelda(index, 'colorFondo', e.target.value)} />
+                  </div>
+                  <div className="col-6 d-flex align-items-center">
+                    <label className="small text-muted me-2" style={{ fontSize: '0.6rem' }}>TEXTO</label>
+                    <input type="color" className="form-control form-control-color border-0 p-0" style={{ height: '24px', width: '100%' }} value={celda.colorTexto || '#ffffff'} onChange={(e) => actualizarCelda(index, 'colorTexto', e.target.value)} />
+                  </div>
+                </div>
+              )}
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
+
+        {espacioRestante > 0 && (
+          <button 
+            className="btn btn-outline-primary btn-sm w-100 py-2" 
+            style={{ borderStyle: 'dashed', borderWidth: '2px' }}
+            onClick={() => setCeldas([...celdas, { id: Date.now(), ancho: 1, tipo: 'texto', contenido: '', colorFondo: '#e9ecef', colorTexto: '#000000' }])}
+          >
+            + Añadir Bloque (Quedan {espacioRestante} celdas)
+          </button>
+        )}
+
+        {!esAnchoValido && (
+          <div className="alert alert-danger mt-2 py-1 small text-center fw-bold">
+            ⚠️ Superaste las {columnasTotales} columnas
+          </div>
+        )}
       </div>
 
-      <div className="modal-footer border-secondary">
-        <button className="btn btn-secondary" onClick={onHideEditor}>CANCELAR</button>
-        <button className="btn btn-info px-4 fw-bold" onClick={guardarCambios}>APLICAR</button>
+      <div className="modal-footer py-2 px-3 bg-white">
+        <button className="btn btn-sm btn-light border px-3" onClick={alCerrar}>Cancelar</button>
+        <button 
+          className="btn btn-sm btn-primary px-4 fw-bold" 
+          disabled={!esAnchoValido || anchoOcupado === 0}
+          onClick={() => alGuardar({ celdas })}
+        >
+          Guardar Fila
+        </button>
       </div>
     </>
   );

@@ -4,22 +4,32 @@
   width: 100vw;
   height: 100vh;
   background-color: #121212;
-  overflow: hidden;
 }
 
 /* El área de previsualización (donde flotan las hojas) */
 .main-preview-area {
-  flex-grow: 1;
-  background-color: #343a40;
-  overflow-y: auto;   /* EL SCROLL DEBE ESTAR AQUÍ */
-  padding: 40px;
+  flex: 1;
+  overflow-y: auto;
+  background-color: #525659;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 40px;          /* Espacio físico entre hojas */
-}
-@media print {
-  .app-container { display: block; background: white; }
-  .main-preview-area { padding: 0; background: white; overflow: visible; }
+  padding: 20px 0;
 }
 
+@media print {
+  /* Al cambiar el display a 'block', el alto de 100vh deja de ser restrictivo 
+     y el contenido fluye según su altura natural */
+  .app-container {
+    display: block;
+    height: auto;
+    width: auto;
+  }
+
+  .main-preview-area {
+    display: block;
+    overflow: visible;
+    background-color: transparent;
+    padding: 0;
+  }
+}

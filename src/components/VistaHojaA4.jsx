@@ -1,70 +1,114 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Tarjeta from './Tarjeta';
 import Banner from './Banner';
 import '../styles/vistaHojaA4.css';
 
 const VistaHojaA4 = ({ productos, datos, bannersManuales, abrirEditor }) => {
-  // Dividimos el array de productos en páginas de 20
+  // Estados para la grilla dinámica
+  const [columnas, setColumnas] = useState(5);
+  const [filasPorHoja, setFilasPorHoja] = useState(4);
+  
+  // CLAVE: El límite de productos por hoja ahora cambia según el slider
+  const prodsPorHoja = columnas * filasPorHoja;
+
+  // Repaginamos el array de productos cada vez que cambian las filas o columnas
   const paginas = [];
-  for (let i = 0; i < productos.length; i += 20) {
-    paginas.push(productos.slice(i, i + 20));
+  if (productos.length === 0) {
+    paginas.push([]); // Una hoja vacía si no hay nada
+  } else {
+    for (let i = 0; i < productos.length; i += prodsPorHoja) {
+      paginas.push(productos.slice(i, i + prodsPorHoja));
+    }
   }
 
-  // Si no hay productos, mostramos una hoja base
-  if (paginas.length === 0) paginas.push([]);
+  return (
+    <div className="hojas-lista-wrapper">
+      
+      {/* Selector de Grilla - Solo Pantalla */}
+      <div className="control-grilla-flotante no-print">
+        <div className="control-group">
+          <label>Columnas: {columnas}</label>
+          <input type="range" min="1" max="6" value={columnas} onChange={(e) => setColumnas(Number(e.target.value))} />
+        </div>
+        <div className="control-group">
+          <label>Filas por Hoja (Máx 4): {filasPorHoja}</label>
+          <input type="range" min="1" max="4" value={filasPorHoja} onChange={(e) => setFilasPorHoja(Number(e.target.value))} />
+        </div>
+        <div className="info-badge">
+          {prodsPorHoja} prods. por carilla
+        </div>
+      </div>
 
-    return (
-      <div className="hojas-lista-wrapper"> {/* Reemplaza a container/row */}
-        {paginas.map((grupo, numPag) => (
-          <article className="vista-hoja-a4" key={numPag}>
-            
-            <header className="header-empresa">
-              {/* Estructura lineal pura sin clases de Bootstrap */}
-              <div className="marca-lineal">
-                  {datos.logoUrl && <img src={datos.logoUrl} alt="Logo" className="logo-img" />}
-                  <h1 className="nombre-texto">{datos.nombre}</h1>
-              </div>
-              <div className="datos-contacto-lineal">
-                  <span>{datos.dir}</span>
-                  <span className="separador">|</span>
-                  <span className="tel-negrita">{datos.tel}</span>
-                  <span className="separador">|</span>
-                  <span className="fecha">{new Date().toLocaleDateString()}</span>
-              </div>
-            </header>
+      {paginas.map((grupo, numPag) => (
+        <article className="vista-hoja-a4" key={numPag}>
+          
+          <header className="header-empresa">
+            <div className="marca-lineal">
+                {datos.logoUrl && <img src={datos.logoUrl} alt="Logo" className="logo-img" />}
+                <h1 className="nombre-texto">{datos.nombre || "CATÁLOGO"}</h1>
+            </div>
+            <div className="datos-contacto-lineal">
+                <span>{datos.dir}</span>
+                <span className="separador">|</span>
+                <span className="tel-negrita">{datos.tel}</span>
+            </div>
+          </header>
 
-            <section className="cuerpo-catalogo">
-              {[0, 1, 2, 3].map((filaIdx) => {
-                const productosFila = grupo.slice(filaIdx * 5, (filaIdx * 5) + 5);
-                const idBanner = `${numPag}-${filaIdx}`;
-                
-                return (
-                  <React.Fragment key={filaIdx}>
-                    <Banner 
-                      id={idBanner} 
-                      datos={bannersManuales[idBanner]} 
-                      abrirEditor={abrirEditor} 
-                    />
+          <section className="cuerpo-catalogo">
+            {/* Solo dibujamos la cantidad de filas permitidas por hoja */}
+            {[...Array(filasPorHoja)].map((_, filaIdx) => {
+              const productosFila = grupo.slice(filaIdx * columnas, (filaIdx * columnas) + columnas);
+              const idBanner = `${numPag}-${filaIdx}`;
+              
+              return (
+                <React.Fragment key={filaIdx}>
+                  <Banner 
+                    id={idBanner} 
+                    datos={bannersManuales[idBanner]} 
+                    abrirEditor={abrirEditor} 
+                  />
 
-                    {/* Esta es tu grilla pura de 5 columnas */}
-                    <div className="fila-productos-contenedor">
-                      {productosFila.map((prod, pIdx) => (
+                  <div 
+                    className="fila-productos-contenedor" 
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: `repeat(${columnas}, 1fr)`,
+                      /* El 240mm es el espacio útil del A4 restando el header */
+                      height: `${240 / filasPorHoja}mm`, 
+                      borderBottom: '0.1pt solid #eee'
+                    }}
+                  >
+                    {[...Array(columnas)].map((_, colIdx) => {
+                      const prod = productosFila[colIdx];
+                      // El indexReal asegura que al editar, toques el producto correcto del array global
+                      const indexReal = (numPag * prodsPorHoja) + (filaIdx * columnas) + colIdx;
+
+                      return prod ? (
                         <Tarjeta 
-                          key={pIdx} 
-                          index={(numPag * 20) + (filaIdx * 5) + pIdx} 
+                          key={colIdx} 
+                          index={indexReal} 
                           producto={prod} 
                           abrirEditor={abrirEditor} 
                         />
-                      ))}
-                    </div>
-                  </React.Fragment>
-                );
-              })}
-            </section>
-          </article>
-        ))}
-      </div>
-    );
+                      ) : (
+                        <div 
+                          key={`empty-${colIdx}`}
+                          className="tarjeta-placeholder no-print"
+                          onClick={() => abrirEditor(indexReal, { nombre: '', precioLista: '' }, 'producto')}
+                        >
+                          <span className="icon-plus">+</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </React.Fragment>
+              );
+            })}
+          </section>
+        </article>
+      ))}
+    </div>
+  );
 };
 
 export default VistaHojaA4;

@@ -7,6 +7,7 @@ const Tarjeta = ({ index, producto, abrirEditor }) => {
   let ahorro = 0;
   let precioUnitarioFinal = 0;
 
+  // --- Lógica de ofertas (se mantiene igual, está perfecta) ---
   if (producto.tipoOferta === 'directa' && producto.ofertaDirecta) {
     precioUnitarioFinal = Math.round(parseFloat(producto.ofertaDirecta));
     textoOferta = `$${precioUnitarioFinal}`;
@@ -31,33 +32,37 @@ const Tarjeta = ({ index, producto, abrirEditor }) => {
     <div className="tarjeta" onClick={() => abrirEditor(index, producto, 'producto')}>
       {ahorro > 0 && <div className="badge-diagonal">{ahorro}% OFF</div>}
       
+      {/* Bloque superior de precios */}
       <div className="precios-container">
         {textoOferta ? (
           <>
             <span className="precio-tachado">${pLista}</span>
             <span className="precio-oferta">{textoOferta}</span>
-            <div className="precio-unitario-final">(C/U ${precioUnitarioFinal})</div>
+            <div className="precio-unitario-final">C/U ${precioUnitarioFinal}</div>
           </>
         ) : (
           <span className="precio-normal">${pLista}</span>
         )}
       </div>
 
+      {/* Contenedor elástico de foto */}
       <div className="foto-contenedor">
         {producto.foto ? (
-          <img src={producto.foto} alt={producto.nombre} />
+          <img src={producto.foto} alt={producto.nombre} className="img-tarjeta" />
         ) : (
           <div className="foto-placeholder">S/F</div>
         )}
       </div>
 
-      <div className="nombre-producto">{producto.nombre}</div>
+      {/* Texto centrado */}
+      <div className="nombre-producto">{producto.nombre || "SIN NOMBRE"}</div>
 
+      {/* Footer siempre al fondo */}
       <div className="tarjeta-footer">
         <span className="pack-info">
-          {producto.tipoPack} X {producto.cantidad} {producto.unidad}
+          {producto.tipoPack} {producto.cantidad} {producto.unidad}
         </span>
-        <span className="codigo-id">ID: {producto.cod}</span>
+        <span className="codigo-id">#{producto.cod || index}</span>
       </div>
     </div>
   );

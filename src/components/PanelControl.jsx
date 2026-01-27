@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { procesarArchivoExcel } from '../services/dataHandler';
 import '../styles/panelControl.css';
 
-const PanelControl = ({ datos, setDatos, setProductos, abrirEditor, totalProds }) => {
+const PanelControl = ({ datos, setDatos, setProductos, abrirEditor, totalProds, resetearTodo }) => {
   const [dragging, setDragging] = useState(false);
 
   // --- Lógica para Importar Excel ---
@@ -152,7 +152,7 @@ const PanelControl = ({ datos, setDatos, setProductos, abrirEditor, totalProds }
       </div>
 
       <div className="panel-footer">
-        <button className="btn-reset" onClick={() => { if(window.confirm("¿Borrar todo?")) setProductos([]); }}>
+        <button className="btn-reset" onClick={resetearTodo}>
           Limpiar Catálogo
         </button>
       </div>

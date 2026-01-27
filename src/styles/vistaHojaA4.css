@@ -121,8 +121,71 @@
     print-color-adjust: exact;
   }
 
+
   /* Ocultamos lo que no debe salir en papel */
   .no-print {
     display: none;
   }
 }
+
+/* --- ESTILO PARA EL BOTÓN DE AGREGAR EN HUECOS VACÍOS --- */
+.tarjeta-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed #d1d1d1;
+  background-color: #fafafa;
+  height: 100%; /* Para que use los 58mm de la fila */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #bbb;
+  box-sizing: border-box;
+}
+
+.tarjeta-placeholder:hover {
+  background-color: #f0f7ff;
+  border-color: #1a5fb4;
+  color: #1a5fb4;
+}
+
+.tarjeta-placeholder .icon-plus {
+  font-size: 22pt;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.tarjeta-placeholder .text-add {
+  font-size: 7pt;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+/* Evitamos que el borde dashed ensucie el PDF */
+@media print {
+  .tarjeta-placeholder {
+    border: none;
+    background: transparent;
+  }
+  .tarjeta-placeholder * {
+    display: none;
+  }
+}
+
+.control-grilla-flotante {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #1a1a1a;
+  padding: 15px;
+  border-radius: 12px;
+  color: white;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  border: 1px solid #444;
+}
+.control-group { display: flex; align-items: center; gap: 10px; font-size: 10px; font-weight: bold; }
