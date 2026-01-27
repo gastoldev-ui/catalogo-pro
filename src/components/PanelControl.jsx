@@ -109,9 +109,10 @@ const PanelControl = ({ datos, setDatos, setProductos, abrirEditor, totalProds, 
       </div>
 
       <div className="panel-footer">
-        <button className="btn-reset" onClick={() => {
-          if (window.confirm("¿Borrar todo el contenido del catálogo?")) resetearTodo();
-        }}>
+        <button 
+          className="btn-reset" 
+          onClick={() => abrirEditor('clear-catalog', {}, 'limpiar')}
+        >
           Limpiar Catálogo
         </button>
       </div>

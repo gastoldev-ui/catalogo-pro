@@ -1,6 +1,7 @@
 import React from 'react';
 import ModalProducto from './ModalProducto';
 import ModalBanner from './ModalBanner';
+import ModalLimpiar from './ModalLimpiar';
 
 const ModalesContainer = ({ showEditor, onHideEditor, tempEditor, guardarCambios, columnasTotales }) => {
   if (!showEditor || !tempEditor) return null;
@@ -18,21 +19,35 @@ const ModalesContainer = ({ showEditor, onHideEditor, tempEditor, guardarCambios
         onClick={(e) => e.stopPropagation()}
       >
         <div className="modal-content shadow border-0 overflow-hidden">
-          {tempEditor.tipo === 'producto' ? (
-            <ModalProducto 
-              producto={tempEditor.datos} 
-              alGuardar={guardarCambios} 
-              alCerrar={onHideEditor} 
-            />
-          ) : (
-            <ModalBanner 
-              banner={tempEditor.datos} 
-              id={tempEditor.id} 
-              columnasTotales={columnasTotales}
-              alGuardar={guardarCambios} 
-              alCerrar={onHideEditor} 
-            />
+          {tempEditor && (
+            <>
+              {tempEditor.tipo === 'producto' && (
+                <ModalProducto 
+                  producto={tempEditor.datos} 
+                  alGuardar={guardarCambios} 
+                  alCerrar={onHideEditor} 
+                />
+              )}
+
+              {tempEditor.tipo === 'banner' && (
+                <ModalBanner 
+                  banner={tempEditor.datos} 
+                  id={tempEditor.id} 
+                  columnasTotales={columnasTotales} 
+                  alGuardar={guardarCambios} 
+                  alCerrar={onHideEditor} 
+                />
+              )}
+
+              {tempEditor.tipo === 'limpiar' && (
+                <ModalLimpiar 
+                  alConfirmar={guardarCambios} 
+                  alCerrar={onHideEditor} 
+                />
+              )}
+            </>
           )}
+          
         </div>
       </div>
     </div>
