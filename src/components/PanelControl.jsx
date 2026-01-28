@@ -8,7 +8,9 @@ const PanelControl = ({
   abrirEditor, 
   totalProds, 
   columnas, setColumnas, 
-  filasPorHoja, setFilasPorHoja 
+  filasPorHoja, setFilasPorHoja,
+  tipoHoja, setTipoHoja,
+  medidaCustom, setMedidaCustom
 }) => {
   const [dragging, setDragging] = useState(false);
 
@@ -98,7 +100,7 @@ const PanelControl = ({
             checked={datos.mostrarNombre !== false}
             onChange={(e) => setDatos({...datos, mostrarNombre: e.target.checked})}
           />
-          <label className="form-check-label small text-muted" htmlFor="switchMostrarNombre" style={{ cursor: 'pointer', fontSize: '11px' }}>
+          <label className="form-check-label small text-muted" htmlFor="switchMostrarNombre" style={{ cursor: 'pointer', fontSize: '15px', color: 'white' }}>
             Mostrar nombre en cabecera
           </label>
         </div>
@@ -116,9 +118,47 @@ const PanelControl = ({
         />
       </div>      
 
-      {/* SECCIÓN CONFIGURACIÓN DE GRILLA */}
+      {/* SECCIÓN CONFIGURACIÓN DE PÁGINA */}
       <div className="panel-section">
         <label className="section-title">DISEÑO DE PÁGINA</label>
+        
+        {/* Selector de Formato */}
+        <div className="control-item mb-3">
+          <label className="small text-muted mb-1">Formato de Hoja</label>
+          <select 
+            className="form-select form-select-sm" 
+            value={tipoHoja} 
+            onChange={(e) => setTipoHoja(e.target.value)}
+          >
+            <option value="A4">A4 (Estándar)</option>
+            <option value="OFICIO">Oficio / Legal</option>
+            <option value="A5">A5 (Folleto)</option>
+            <option value="CUSTOM">Personalizado</option>
+          </select>
+        </div>
+
+        {/* Inputs para medida Custom */}
+        {tipoHoja === 'CUSTOM' && (
+          <div className="d-flex gap-2 mb-3 align-items-end" style={{animation: 'fadeIn 0.3s'}}>
+            <div className="flex-fill">
+              <label style={{fontSize: '9px', color: '#888'}}>Ancho mm</label>
+              <input 
+                type="number" className="form-control form-control-sm"
+                value={medidaCustom.ancho}
+                onChange={(e) => setMedidaCustom({...medidaCustom, ancho: Number(e.target.value)})}
+              />
+            </div>
+            <div className="flex-fill">
+              <label style={{fontSize: '9px', color: '#888'}}>Alto mm</label>
+              <input 
+                type="number" className="form-control form-control-sm"
+                value={medidaCustom.alto}
+                onChange={(e) => setMedidaCustom({...medidaCustom, alto: Number(e.target.value)})}
+              />
+            </div>
+          </div>
+        )}
+
         <div className="control-item mb-2">
           <div className="d-flex justify-content-between">
             <label className="small text-muted">Columnas</label>

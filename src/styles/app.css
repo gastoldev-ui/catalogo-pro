@@ -7,14 +7,13 @@
 }
 
 /* El área de previsualización (donde flotan las hojas) */
+
 .main-preview-area {
   flex: 1;
-  overflow-y: auto;
-  background-color: #525659;
+  height: 100vh;
+  overflow-y: auto; /* El scroll sucede acá */
+  background-color: #343a40; /* El mismo fondo para que no haya saltos de color */
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px 0;
 }
 
 @media print {

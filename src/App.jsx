@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './styles/app.css'; 
 import PanelControl from './components/PanelControl';
-import VistaHojaA4 from './components/VistaHojaA4';
+import VistaImpresion from './components/VistaImpresion'; // Cambiado el nombre
 import ModalesContainer from './components/ModalesContainer';
 
 function App() {
@@ -12,6 +12,12 @@ function App() {
   // Persistencia de Columnas y Filas
   const [columnas, setColumnas] = useState(() => Number(localStorage.getItem('cat_cols')) || 5);
   const [filasPorHoja, setFilasPorHoja] = useState(() => Number(localStorage.getItem('cat_filas')) || 4);
+
+  // NUEVO: Persistencia de Formato de Hoja
+  const [tipoHoja, setTipoHoja] = useState(() => localStorage.getItem('cat_tipo_hoja') || 'A4');
+  const [medidaCustom, setMedidaCustom] = useState(() => 
+    JSON.parse(localStorage.getItem('cat_medida_custom')) || { ancho: 210, alto: 297 }
+  );
 
   const [datos, setDatos] = useState(() => JSON.parse(localStorage.getItem('cat_ajustes')) || { 
     nombre: '', 
@@ -32,7 +38,10 @@ function App() {
     localStorage.setItem('cat_ajustes', JSON.stringify(datos));
     localStorage.setItem('cat_cols', columnas.toString());
     localStorage.setItem('cat_filas', filasPorHoja.toString());
-  }, [productos, bannersManuales, datos, columnas, filasPorHoja]);
+    // Guardamos la nueva configuración de hoja
+    localStorage.setItem('cat_tipo_hoja', tipoHoja);
+    localStorage.setItem('cat_medida_custom', JSON.stringify(medidaCustom));
+  }, [productos, bannersManuales, datos, columnas, filasPorHoja, tipoHoja, medidaCustom]);
 
   // --- LÓGICA DE APERTURA DE MODALES ---
   const abrirEditor = (id, info, tipo) => {
@@ -75,7 +84,7 @@ function App() {
 
   return (
     <div className="app-container">
-      {/* PANEL DE CONTROL: Ahora recibe también las filas */}
+      {/* PANEL DE CONTROL: Recibe los nuevos setters de hoja */}
       <PanelControl 
         datos={datos} 
         setDatos={setDatos} 
@@ -84,19 +93,25 @@ function App() {
         setColumnas={setColumnas}
         filasPorHoja={filasPorHoja}
         setFilasPorHoja={setFilasPorHoja}
+        tipoHoja={tipoHoja}
+        setTipoHoja={setTipoHoja}
+        medidaCustom={medidaCustom}
+        setMedidaCustom={setMedidaCustom}
         totalProds={productos.length}
         abrirEditor={abrirEditor}
       />
 
-      {/* ÁREA DE PREVISUALIZACIÓN: Recibe columnas y filas para calcular páginas */}
+      {/* ÁREA DE PREVISUALIZACIÓN: Ahora con VistaImpresion y lógica de hoja */}
       <main className="main-preview-area">
-        <VistaHojaA4 
+        <VistaImpresion 
           productos={productos} 
           datos={datos} 
           bannersManuales={bannersManuales} 
           abrirEditor={abrirEditor}
           columnas={columnas}
           filasPorHoja={filasPorHoja}
+          tipoHoja={tipoHoja}
+          medidaCustom={medidaCustom}
         />
       </main>
 

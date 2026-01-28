@@ -1,0 +1,172 @@
+/* ==========================================
+   ESTRUCTURA DE IMPRESIÓN DINÁMICA
+   ========================================== */
+
+/* Contenedor externo (Previsualización en pantalla) */
+.contenedor-impresion-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  width: 100%;
+  padding: 40px 0;
+  /* CAMBIO: Usamos un color un poco más oscuro para que la hoja blanca resalte */
+  background-color: #343a40; 
+  min-height: 100vh;
+  /* Aseguramos que el fondo se vea aunque scrollees */
+  background-attachment: fixed;
+}
+
+/* La Hoja Física (Medidas dinámicas desde React) */
+.hoja-impresion {
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  position: relative;
+  flex-shrink: 0;
+  overflow: hidden;
+  /* Sombra más pronunciada para que "flote" sobre el fondo oscuro */
+  box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+  padding: 0; 
+}
+
+/* ==========================================
+   HEADER SIEMPRE EN LÍNEA
+   ========================================== */
+.header-catalogo-fijo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5mm;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: white;
+  position: relative; /* Necesario para ubicar la línea */
+}
+
+/* Creamos la línea con un pseudo-elemento */
+.header-catalogo-fijo::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  /* Aquí sucede la magia: */
+  left: 5mm; 
+  right: 5mm;
+  height: 2pt;
+  background-color: #1a5fb4;
+}
+
+.marca-lineal {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 100%;
+}
+
+.logo-img-fija {
+  height: 10mm; 
+  width: auto;
+  object-fit: contain;
+  transition: all 0.2s ease-out;
+}
+
+/* Si NO hay nombre, el logo crece */
+.header-catalogo-fijo:not(:has(.nombre-texto-fijo)) .logo-img-fija {
+  height: 16mm; 
+}
+
+.nombre-texto-fijo {
+  font-size: 14pt;
+  font-weight: 900;
+  color: #1a5fb4;
+  text-transform: uppercase;
+  margin: 0;
+  line-height: 1;
+}
+
+.datos-contacto-fijos {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10pt;
+  color: #444;
+}
+
+/* ==========================================
+   CUERPO Y FILAS CON PADDING LATERAL
+   ========================================== */
+.cuerpo-catalogo-fijo {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex-grow: 1;
+  /* Padding lateral para que nada toque los bordes */
+  padding: 0 5mm; 
+  box-sizing: border-box;
+}
+
+.bloque-fila-impresion {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-bottom: 0.1pt solid #eee;
+}
+
+.zona-banner-fija {
+  width: 100%;
+  overflow: hidden;
+}
+
+.grilla-productos-fija {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ==========================================
+   PLACEHOLDERS Y UI
+   ========================================== */
+.tarjeta-placeholder-fija {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed #ddd;
+  background-color: #fafafa;
+  height: 100%;
+  cursor: pointer;
+  color: #ccc;
+  font-size: 24px;
+}
+
+.footer-paginado {
+  position: absolute;
+  bottom: 4mm;
+  right: 10mm;
+  font-size: 7pt;
+  color: #bbb;
+}
+
+.separador { color: #1a5fb4; font-weight: bold; opacity: 0.4; margin: 0 2px; }
+.tel-negrita { font-weight: 800; color: #111; }
+
+/* ==========================================
+   CONFIGURACIÓN DE IMPRESORA
+   ========================================== */
+@media print {
+  @page { margin: 0; }
+  
+  .contenedor-impresion-wrapper { 
+    padding: 0; 
+    gap: 0; 
+    background-color: white !important;
+  }
+
+  .hoja-impresion {
+    margin: 0;
+    box-shadow: none;
+    page-break-after: always;
+    break-after: page;
+  }
+
+  .no-print { display: none !important; }
+}
