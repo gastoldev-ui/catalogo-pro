@@ -18,7 +18,7 @@ function App() {
   const [medidaCustom, setMedidaCustom] = useState(() => 
     JSON.parse(localStorage.getItem('cat_medida_custom')) || { ancho: 210, alto: 297 }
   );
-
+  const [orientacion, setOrientacion] = useState(() => localStorage.getItem('cat_orientacion') || 'vertical');
   const [datos, setDatos] = useState(() => JSON.parse(localStorage.getItem('cat_ajustes')) || { 
     nombre: '', 
     dir: '', 
@@ -41,7 +41,7 @@ function App() {
     // Guardamos la nueva configuración de hoja
     localStorage.setItem('cat_tipo_hoja', tipoHoja);
     localStorage.setItem('cat_medida_custom', JSON.stringify(medidaCustom));
-  }, [productos, bannersManuales, datos, columnas, filasPorHoja, tipoHoja, medidaCustom]);
+  }, [productos, bannersManuales, datos, columnas, filasPorHoja, tipoHoja, medidaCustom, orientacion]);
 
   // --- LÓGICA DE APERTURA DE MODALES ---
   const abrirEditor = (id, info, tipo) => {
@@ -99,6 +99,8 @@ function App() {
         setMedidaCustom={setMedidaCustom}
         totalProds={productos.length}
         abrirEditor={abrirEditor}
+        orientacion={orientacion} 
+        setOrientacion={setOrientacion}
       />
 
       {/* ÁREA DE PREVISUALIZACIÓN: Ahora con VistaImpresion y lógica de hoja */}
@@ -112,6 +114,7 @@ function App() {
           filasPorHoja={filasPorHoja}
           tipoHoja={tipoHoja}
           medidaCustom={medidaCustom}
+          orientacion={orientacion}
         />
       </main>
 

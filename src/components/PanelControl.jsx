@@ -10,7 +10,8 @@ const PanelControl = ({
   columnas, setColumnas, 
   filasPorHoja, setFilasPorHoja,
   tipoHoja, setTipoHoja,
-  medidaCustom, setMedidaCustom
+  medidaCustom, setMedidaCustom,
+  orientacion, setOrientacion
 }) => {
   const [dragging, setDragging] = useState(false);
 
@@ -100,7 +101,7 @@ const PanelControl = ({
             checked={datos.mostrarNombre !== false}
             onChange={(e) => setDatos({...datos, mostrarNombre: e.target.checked})}
           />
-          <label className="form-check-label small text-muted" htmlFor="switchMostrarNombre" style={{ cursor: 'pointer', fontSize: '15px', color: 'white' }}>
+          <label className="form-check-label small text-white-50" htmlFor="switchMostrarNombre" style={{ cursor: 'pointer', fontSize: '15px', color: 'white' }}>
             Mostrar nombre en cabecera
           </label>
         </div>
@@ -124,7 +125,7 @@ const PanelControl = ({
         
         {/* Selector de Formato */}
         <div className="control-item mb-3">
-          <label className="small text-muted mb-1">Formato de Hoja</label>
+          <label className="small text-white-50 mb-1">Formato de Hoja</label>
           <select 
             className="form-select form-select-sm" 
             value={tipoHoja} 
@@ -135,6 +136,38 @@ const PanelControl = ({
             <option value="A5">A5 (Folleto)</option>
             <option value="CUSTOM">Personalizado</option>
           </select>
+        </div>
+
+        {/* --- ORIENTACIÓN --- */}
+        <div className="mb-3">
+          <label className="form-label small fw-bold text-info-emphasis d-block">
+            Orientación de Hoja
+          </label>
+          <div className="btn-group w-100" role="group">
+            <input
+              type="radio"
+              className="btn-check"
+              name="orientacion"
+              id="portrait"
+              checked={orientacion === 'vertical'}
+              onChange={() => setOrientacion('vertical')}
+            />
+            <label className="btn btn-outline-primary btn-sm" htmlFor="portrait">
+              <i className="bi bi-file-earmark-text me-1"></i> Vertical
+            </label>
+
+            <input
+              type="radio"
+              className="btn-check"
+              name="orientacion"
+              id="landscape"
+              checked={orientacion === 'horizontal'}
+              onChange={() => setOrientacion('horizontal')}
+            />
+            <label className="btn btn-outline-primary btn-sm" htmlFor="landscape">
+              <i className="bi bi-file-earmark-ruled me-1"></i> Horizontal
+            </label>
+          </div>
         </div>
 
         {/* Inputs para medida Custom */}
@@ -161,7 +194,7 @@ const PanelControl = ({
 
         <div className="control-item mb-2">
           <div className="d-flex justify-content-between">
-            <label className="small text-muted">Columnas</label>
+            <label className="small text-white-50">Columnas</label>
             <span className="fw-bold text-primary">{columnas}</span>
           </div>
           <input 
@@ -172,7 +205,7 @@ const PanelControl = ({
 
         <div className="control-item">
           <div className="d-flex justify-content-between">
-            <label className="small text-muted">Filas por Hoja</label>
+            <label className="small text-white-50">Filas por Hoja</label>
             <span className="fw-bold text-primary">{filasPorHoja}</span>
           </div>
           <input 
@@ -181,7 +214,7 @@ const PanelControl = ({
           />
         </div>
         
-        <div className="info-badge-panel mt-2 text-center small py-1 bg-light border rounded text-muted">
+        <div className="info-badge-panel mt-2 text-center small py-1 bg-light border rounded text-white-50">
           {columnas * filasPorHoja} productos por carilla
         </div>
       </div>

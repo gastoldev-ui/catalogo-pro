@@ -11,7 +11,8 @@ const VistaImpresion = ({
   columnas, 
   filasPorHoja,
   tipoHoja,
-  medidaCustom 
+  medidaCustom,
+  orientacion
 }) => {
 
   // 1. Configuración de medidas físicas (en mm)
@@ -22,7 +23,14 @@ const VistaImpresion = ({
     'CUSTOM': medidaCustom
   };
 
-  const dimensiones = MEDIDAS_HOJAS[tipoHoja] || MEDIDAS_HOJAS['A4'];
+    // a. Buscamos las medidas base según el tipo de hoja
+    const dimensionesBase = MEDIDAS_HOJAS[tipoHoja] || MEDIDAS_HOJAS['A4'];
+
+    // b. Aplicamos la rotación si es necesario
+    const dimensiones = orientacion === 'horizontal' 
+      ? { ancho: dimensionesBase.alto, alto: dimensionesBase.ancho }
+      : dimensionesBase;
+  
 
   // 2. Matemática de espacios (mm)
   const ALTO_HEADER = 22; 
