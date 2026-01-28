@@ -246,3 +246,19 @@
     display: none !important;
   }
 }
+.info-badge-panel {
+  font-weight: 600;
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #1a5fb4 !important;
+}
+
+.control-item label {
+  font-size: 11px;
+  margin-bottom: 2px;
+}
+
+/* Mejora estética para los sliders de Bootstrap si los usas */
+.form-range::-webkit-slider-thumb {
+  background: #1a5fb4;
+}

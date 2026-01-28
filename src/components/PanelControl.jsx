@@ -2,7 +2,14 @@ import React, { useState } from 'react';
 import { procesarArchivoExcel } from '../services/dataHandler';
 import '../styles/panelControl.css';
 
-const PanelControl = ({ datos, setDatos, setProductos, abrirEditor, totalProds, resetearTodo }) => {
+const PanelControl = ({ 
+  datos, setDatos, 
+  setProductos, 
+  abrirEditor, 
+  totalProds, 
+  columnas, setColumnas, 
+  filasPorHoja, setFilasPorHoja 
+}) => {
   const [dragging, setDragging] = useState(false);
 
   const handleFileChange = async (e) => {
@@ -10,7 +17,6 @@ const PanelControl = ({ datos, setDatos, setProductos, abrirEditor, totalProds, 
     if (!file) return;
     try {
       const nuevosProductos = await procesarArchivoExcel(file);
-      // Agregamos IDs únicos a los productos importados para que sean editables
       const productosConId = nuevosProductos.map((p, i) => ({
         ...p,
         id: Date.now() + i
@@ -77,11 +83,69 @@ const PanelControl = ({ datos, setDatos, setProductos, abrirEditor, totalProds, 
       {/* SECCIÓN DATOS */}
       <div className="panel-section">
         <label className="section-title">DATOS DE EMPRESA</label>
-        <input type="text" placeholder="Nombre" value={datos.nombre} onChange={(e) => setDatos({...datos, nombre: e.target.value})} />
-        <input type="text" placeholder="Dirección" value={datos.dir} onChange={(e) => setDatos({...datos, dir: e.target.value})} />
-        <input type="text" placeholder="WhatsApp" value={datos.tel} onChange={(e) => setDatos({...datos, tel: e.target.value})} />
-      </div>
+        <input 
+          type="text" 
+          placeholder="Nombre" 
+          value={datos.nombre} 
+          onChange={(e) => setDatos({...datos, nombre: e.target.value})} 
+        />
+        <div className="form-check form-switch mb-3 mt-1 d-flex align-items-center">
+          <input 
+            className="form-check-input me-2" 
+            type="checkbox" 
+            id="switchMostrarNombre"
+            style={{ cursor: 'pointer' }}
+            checked={datos.mostrarNombre !== false}
+            onChange={(e) => setDatos({...datos, mostrarNombre: e.target.checked})}
+          />
+          <label className="form-check-label small text-muted" htmlFor="switchMostrarNombre" style={{ cursor: 'pointer', fontSize: '11px' }}>
+            Mostrar nombre en cabecera
+          </label>
+        </div>
+        <input 
+          type="text" 
+          placeholder="Dirección" 
+          value={datos.dir} 
+          onChange={(e) => setDatos({...datos, dir: e.target.value})} 
+        />
+        <input 
+          type="text" 
+          placeholder="WhatsApp" 
+          value={datos.tel} 
+          onChange={(e) => setDatos({...datos, tel: e.target.value})} 
+        />
+      </div>      
 
+      {/* SECCIÓN CONFIGURACIÓN DE GRILLA */}
+      <div className="panel-section">
+        <label className="section-title">DISEÑO DE PÁGINA</label>
+        <div className="control-item mb-2">
+          <div className="d-flex justify-content-between">
+            <label className="small text-muted">Columnas</label>
+            <span className="fw-bold text-primary">{columnas}</span>
+          </div>
+          <input 
+            type="range" className="form-range" min="3" max="6" 
+            value={columnas} onChange={(e) => setColumnas(Number(e.target.value))} 
+          />
+        </div>
+
+        <div className="control-item">
+          <div className="d-flex justify-content-between">
+            <label className="small text-muted">Filas por Hoja</label>
+            <span className="fw-bold text-primary">{filasPorHoja}</span>
+          </div>
+          <input 
+            type="range" className="form-range" min="1" max="5" 
+            value={filasPorHoja} onChange={(e) => setFilasPorHoja(Number(e.target.value))} 
+          />
+        </div>
+        
+        <div className="info-badge-panel mt-2 text-center small py-1 bg-light border rounded text-muted">
+          {columnas * filasPorHoja} productos por carilla
+        </div>
+      </div>
+      
       {/* SECCIÓN ACCIONES */}
       <div className="panel-section">
         <label className="section-title">ACCIONES</label>
@@ -93,7 +157,6 @@ const PanelControl = ({ datos, setDatos, setProductos, abrirEditor, totalProds, 
         <button 
           className="btn-action btn-add"
           onClick={() => {
-            // Clave: Usar un ID que no exista (timestamp)
             const idUnico = Date.now();
             abrirEditor(idUnico, { 
               nombre: '', precioLista: 0, tipoPack: 'PACK', cantidad: 1, unidad: 'UDS', tipoOferta: 'ninguna' 

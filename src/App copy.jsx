@@ -8,18 +8,15 @@ function App() {
   // --- ESTADOS CON PERSISTENCIA ---
   const [productos, setProductos] = useState(() => JSON.parse(localStorage.getItem('cat_prods')) || []);
   const [bannersManuales, setBannersManuales] = useState(() => JSON.parse(localStorage.getItem('cat_banners')) || {});
-  
-  // Persistencia de Columnas y Filas
   const [columnas, setColumnas] = useState(() => Number(localStorage.getItem('cat_cols')) || 5);
-  const [filasPorHoja, setFilasPorHoja] = useState(() => Number(localStorage.getItem('cat_filas')) || 4);
-
   const [datos, setDatos] = useState(() => JSON.parse(localStorage.getItem('cat_ajustes')) || { 
     nombre: '', 
     dir: '', 
     tel: '', 
     logoUrl: '',
-    mostrarNombre: true 
+    mostrarNombre: true // Valor por defecto
   });
+  
   
   // --- ESTADOS DE UI ---
   const [showModal, setShowModal] = useState(false);
@@ -31,8 +28,7 @@ function App() {
     localStorage.setItem('cat_banners', JSON.stringify(bannersManuales));
     localStorage.setItem('cat_ajustes', JSON.stringify(datos));
     localStorage.setItem('cat_cols', columnas.toString());
-    localStorage.setItem('cat_filas', filasPorHoja.toString());
-  }, [productos, bannersManuales, datos, columnas, filasPorHoja]);
+  }, [productos, bannersManuales, datos, columnas]);
 
   // --- LÓGICA DE APERTURA DE MODALES ---
   const abrirEditor = (id, info, tipo) => {
@@ -42,6 +38,7 @@ function App() {
 
   // --- PROCESADOR CENTRAL DE CAMBIOS ---
   const guardarCambios = (nuevosDatos) => {
+    // CASO 1: PRODUCTOS
     if (tempEditor.tipo === 'producto') {
       setProductos(prev => {
         const existe = prev.find(p => p.id === tempEditor.id);
@@ -51,9 +48,14 @@ function App() {
         return [...prev, { ...nuevosDatos, id: tempEditor.id }];
       });
     } 
+    // CASO 2: BANNERS
     else if (tempEditor.tipo === 'banner') {
-      setBannersManuales(prev => ({ ...prev, [tempEditor.id]: nuevosDatos }));
+      setBannersManuales(prev => ({
+        ...prev,
+        [tempEditor.id]: nuevosDatos
+      }));
     } 
+    // CASO 3: LIMPIEZA GRANULAR (Recibe el objeto de ModalLimpiar)
     else if (tempEditor.tipo === 'limpiar') {
       if (nuevosDatos.productos) {
         setProductos([]);
@@ -64,7 +66,7 @@ function App() {
         localStorage.removeItem('cat_banners');
       }
       if (nuevosDatos.empresa) {
-        setDatos({ nombre: '', dir: '', tel: '', logoUrl: '', mostrarNombre: true });
+        setDatos({ nombre: '', dir: '', tel: '', logoUrl: '' });
         localStorage.removeItem('cat_ajustes');
       }
     }
@@ -75,20 +77,18 @@ function App() {
 
   return (
     <div className="app-container">
-      {/* PANEL DE CONTROL: Ahora recibe también las filas */}
+      {/* PANEL DE CONTROL: Recibe las funciones para interactuar */}
       <PanelControl 
         datos={datos} 
         setDatos={setDatos} 
         setProductos={setProductos}
         columnas={columnas} 
         setColumnas={setColumnas}
-        filasPorHoja={filasPorHoja}
-        setFilasPorHoja={setFilasPorHoja}
         totalProds={productos.length}
         abrirEditor={abrirEditor}
       />
 
-      {/* ÁREA DE PREVISUALIZACIÓN: Recibe columnas y filas para calcular páginas */}
+      {/* ÁREA DE PREVISUALIZACIÓN */}
       <main className="main-preview-area">
         <VistaHojaA4 
           productos={productos} 
@@ -96,11 +96,10 @@ function App() {
           bannersManuales={bannersManuales} 
           abrirEditor={abrirEditor}
           columnas={columnas}
-          filasPorHoja={filasPorHoja}
         />
       </main>
 
-      {/* CONTENEDOR DE MODALES */}
+      {/* CONTENEDOR DE MODALES: Maneja la lógica de guardado */}
       <ModalesContainer 
         showEditor={showModal} 
         onHideEditor={() => {

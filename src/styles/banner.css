@@ -3,10 +3,10 @@
   width: 100%;
   display: grid; 
   align-items: stretch; 
-  /* Eliminamos justify-content para permitir que repeat(n, 1fr) mande */
   overflow: hidden;
-  margin-bottom: 1mm;
+  margin-bottom: 0.5mm; /* Menos margen para no desplazar productos */
   background-color: transparent;
+  height: 10mm; /* Altura fija para que el cálculo del A4 sea exacto */
 }
 
 .celda-banner-item {
@@ -39,7 +39,7 @@
 .banner-img-render {
   width: 100%;
   height: 100%;
-  object-fit: cover; 
+  object-fit: cover; /* Cambia a contain si no quieres que se recorte nada */
   display: block;
 }
 
